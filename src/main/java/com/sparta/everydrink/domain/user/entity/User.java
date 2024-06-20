@@ -1,34 +1,40 @@
 package com.sparta.everydrink.domain.user.entity;
 
-import com.sparta.everydrink.domain.common.TimeStampEntity;
+import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
 @NoArgsConstructor
-public class User extends TimeStampEntity {
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable =false)
     private String password;
 
-    @Column(name = "nickname", nullable = false)
+    @Column(nullable = false)
     private String nickname;
 
-    @Column(name = "user_role", nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
-    @Column(name = "user_status", nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserStatusEnum status;
 
@@ -36,12 +42,23 @@ public class User extends TimeStampEntity {
     @Column(name = "refresh_token")
     private String refreshToken;
 
-    public User(String username, String password, String nickname, UserRoleEnum userRole, UserStatusEnum userStatus){
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
-        this.role = userRole;
-        this.status = userStatus;
+    @CreatedDate
+    @Column(updatable = false, nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime created_at;
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime modified_at;
+
+
+    public User(UserSignupRequestDto requestDto) {
+        this.username = requestDto.getUsername();
+        this.password = requestDto.getPassword();
+        this.nickname = requestDto.getNickname();
+        this.role = requestDto.getRole();
+        this.status = UserStatusEnum.ACTIVE;
     }
 
     public void logoutUser(){

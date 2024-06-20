@@ -1,5 +1,6 @@
 package com.sparta.everydrink.domain.user.service;
 
+import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
 import com.sparta.everydrink.security.jwt.JwtService;
@@ -20,6 +21,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final RedisUtil redisUtil;
+
+    public void signUp(UserSignupRequestDto requestDto) {
+        User user = new User(requestDto);
+        userRepository.save(user);
+    }
 
     public void logout(HttpServletRequest request) {
         String accessToken = request.getHeader("Authorization").substring(7);
