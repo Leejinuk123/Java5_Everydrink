@@ -53,12 +53,12 @@ public class User {
     private LocalDateTime modified_at;
 
 
-    public User(UserSignupRequestDto requestDto) {
-        this.username = requestDto.getUsername();
-        this.password = requestDto.getPassword();
-        this.nickname = requestDto.getNickname();
-        this.role = requestDto.getRole();
-        this.status = UserStatusEnum.ACTIVE;
+    public User(String username, String password, String nickname, UserRoleEnum role, UserStatusEnum status) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.role = role;
+        this.status = status;
     }
 
     public void logoutUser(){

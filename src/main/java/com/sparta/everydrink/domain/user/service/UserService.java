@@ -1,7 +1,10 @@
 package com.sparta.everydrink.domain.user.service;
 
+import com.sparta.everydrink.config.PasswordConfig;
 import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
 import com.sparta.everydrink.domain.user.entity.User;
+import com.sparta.everydrink.domain.user.entity.UserRoleEnum;
+import com.sparta.everydrink.domain.user.entity.UserStatusEnum;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
 import com.sparta.everydrink.security.jwt.JwtService;
 import com.sparta.everydrink.util.RedisUtil;
@@ -11,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,10 +25,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final RedisUtil redisUtil;
+    private final PasswordEncoder passwordEncoder;
 
     public void signUp(UserSignupRequestDto requestDto) {
-        User user = new User(requestDto);
+        User user = new User(requestDto.getUsername(), passwordEncoder.encode(requestDto.getPassword()), requestDto.getNickname(), UserRoleEnum.USER, UserStatusEnum.ACTIVE);
         userRepository.save(user);
+        log.info("회원가입 완료");
     }
 
     public void logout(HttpServletRequest request) {
