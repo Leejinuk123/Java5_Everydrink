@@ -24,7 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final RedisUtil redisUtil;
+    //private final RedisUtil redisUtil;
     private final PasswordEncoder passwordEncoder;
 
     public void signUp(UserSignupRequestDto requestDto) {
@@ -49,8 +49,8 @@ public class UserService {
 
         // 4. Access Token blacklist에 등록하여 만료시키기
         // 해당 엑세스 토큰의 남은 유효시간을 얻음
-        Long expiration = jwtService.getRemainingValidityMillis(accessToken);
-        redisUtil.setBlackList(accessToken, "access_token", expiration);
+        //Long expiration = jwtService.getRemainingValidityMillis(accessToken);
+        //redisUtil.setBlackList(accessToken, "access_token", expiration);
 
 //        User user = loadUserByUserId(jwtService.extractUsername(accessToken));
 //        user.logoutUser();

@@ -30,7 +30,7 @@ public class JwtService {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-    private final RedisUtil redisUtil;
+    // private final RedisUtil redisUtil;
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 //    public static final String AUTHORIZATION_KEY = "auth";
@@ -85,11 +85,30 @@ public class JwtService {
     }
 
     // 토큰 검증
+//    public boolean validateToken(String token) {
+//        try {
+//            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+//            //토큰이 blacklist 에 존재하는 토큰인지 확인.
+//            //return !redisUtil.hasKeyBlackList(token);
+//        } catch (SecurityException | MalformedJwtException | SignatureException e) {
+//            logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+//        } catch (ExpiredJwtException e) {
+//            logger.error("Expired JWT token, 만료된 JWT token 입니다.");
+//        } catch (UnsupportedJwtException e) {
+//            logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+//        } catch (IllegalArgumentException e) {
+//            logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+//        }
+//        return false;
+//    }
+
+    // 토큰 검증
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
             //토큰이 blacklist 에 존재하는 토큰인지 확인.
-            return !redisUtil.hasKeyBlackList(token);
+//            return !redisUtil.hasKeyBlackList(token);
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
