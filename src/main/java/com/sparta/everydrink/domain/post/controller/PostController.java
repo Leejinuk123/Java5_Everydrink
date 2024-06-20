@@ -30,7 +30,6 @@ import java.util.List;
 @RequestMapping("/api/post")
 public class PostController {
 
-
     private final PostService postService;
     //private final CommentService commentService;
     private final PostRepository postRepository;

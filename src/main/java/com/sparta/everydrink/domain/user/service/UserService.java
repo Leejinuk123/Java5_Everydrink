@@ -7,11 +7,8 @@ import com.sparta.everydrink.domain.user.entity.UserStatusEnum;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
 import com.sparta.everydrink.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +28,6 @@ public class UserService {
         log.info("회원가입 완료");
     }
 
-    @Transactional
     public void logout(HttpServletRequest request, User user) {
         String accessToken = request.getHeader("Authorization").substring(7);
         String refreshToken = request.getHeader("RefreshToken").substring(7);
@@ -39,22 +35,11 @@ public class UserService {
         // 1. Access Token 검증
         jwtService.validateToken(accessToken);
 
-        // 2. Access Token 에서 authentication 을 가져옵니다.
-//        Authentication authentication = jwtService.getAuthentication(accessToken);
-
-        // 3. DB에 저장된 Refresh Token 제거
-//        User user = (User) authentication.getDetails();
-        user.logoutUser();
+        User saveUser = loadUserByUserId(user.getUsername());
+        saveUser.logoutUser();
         userRepository.save(user);
 
-        // 4. Access Token blacklist에 등록하여 만료시키기
-        // 해당 엑세스 토큰의 남은 유효시간을 얻음
-
-//        User user = loadUserByUserId(jwtService.extractUsername(accessToken));
-//        user.logoutUser();
-
-//        SecurityContextHolder.clearContext();
-        log.info("logout success");
+        log.info("로그아웃 성공");
     }
 
     public User loadUserByUserId(String username) throws UsernameNotFoundException {
