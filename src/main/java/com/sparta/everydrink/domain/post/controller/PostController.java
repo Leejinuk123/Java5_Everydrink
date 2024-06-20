@@ -1,9 +1,6 @@
 package com.sparta.everydrink.domain.post.controller;
 
 
-import com.sparta.everydrink.domain.comment.dto.CommentResponseDto;
-import com.sparta.everydrink.domain.comment.dto.PostWithCommentsResponseDto;
-import com.sparta.everydrink.domain.comment.service.CommentService;
 import com.sparta.everydrink.domain.common.CommonResponseDto;
 import com.sparta.everydrink.domain.post.dto.PostPageRequestDto;
 import com.sparta.everydrink.domain.post.dto.PostPageResponseDto;
@@ -11,7 +8,6 @@ import com.sparta.everydrink.domain.post.dto.PostRequestDto;
 import com.sparta.everydrink.domain.post.dto.PostResponseDto;
 import com.sparta.everydrink.domain.post.repository.PostRepository;
 import com.sparta.everydrink.domain.post.service.PostService;
-import com.sparta.everydrink.security.AuthenticationUser;
 import com.sparta.everydrink.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
