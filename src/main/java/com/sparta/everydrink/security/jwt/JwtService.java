@@ -1,12 +1,18 @@
 package com.sparta.everydrink.security.jwt;
 
+import com.sparta.everydrink.security.UserDetailsServiceImpl;
+import com.sparta.everydrink.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -16,10 +22,15 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Component
+@RequiredArgsConstructor
 public class JwtService {
 
     // 로그 설정
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
+
+    private final UserDetailsServiceImpl userDetailsService;
+
+    private final RedisUtil redisUtil;
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 //    public static final String AUTHORIZATION_KEY = "auth";
@@ -77,7 +88,8 @@ public class JwtService {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            //토큰이 blacklist 에 존재하는 토큰인지 확인.
+            return !redisUtil.hasKeyBlackList(token);
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
@@ -95,6 +107,13 @@ public class JwtService {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
+    //Token 으로 Authentication 가져오기
+    public Authentication getAuthentication(String token) {
+        String username = extractUsername(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
     // HttpServletRequest 에서 access token 가져오기
     public String getTokenFromRequest(HttpServletRequest req) {
         String accessToken = req.getHeader("Authorization").substring(7);
@@ -102,7 +121,7 @@ public class JwtService {
         return accessToken;
     }
 
-    public String extractUserId(String token){
+    public String extractUsername(String token){
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -119,7 +138,12 @@ public class JwtService {
         return extractAllClaims(token).getExpiration();
     }
 
-    public boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    public long getRemainingValidityMillis(String accessToken) {
+        Date expiration = extractExpiration(accessToken);
+        Date now = new Date();
+        return expiration.getTime() - now.getTime();
     }
+//    public boolean isTokenExpired(String token) {
+//        return extractExpiration(token).before(new Date());
+//    }
 }

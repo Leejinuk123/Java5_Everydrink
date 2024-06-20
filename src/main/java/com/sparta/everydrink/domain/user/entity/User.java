@@ -43,9 +43,10 @@ public class User extends TimeStampEntity {
         this.role = userRole;
         this.status = userStatus;
     }
-//    public void setRefreshToken(String refreshToken){
-//        this.refreshToken = refreshToken;
-//    }
+
+    public void logoutUser(){
+        this.refreshToken = "logged out";
+    }
 
     public void deleteUser(){
         this.status = UserStatusEnum.DELETED;
