@@ -2,5 +2,5 @@ package com.sparta.everydrink.domain.user.entity;
 
 public enum UserStatusEnum {
     ACTIVE,
-    DELETE
+    DELETED
 }
