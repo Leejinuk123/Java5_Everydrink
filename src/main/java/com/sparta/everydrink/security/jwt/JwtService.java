@@ -1,5 +1,8 @@
 package com.sparta.everydrink.security.jwt;
 
+import com.sparta.everydrink.domain.user.entity.User;
+import com.sparta.everydrink.domain.user.repository.UserRepository;
+import com.sparta.everydrink.security.UserDetailsImpl;
 import com.sparta.everydrink.security.UserDetailsServiceImpl;
 import com.sparta.everydrink.util.RedisUtil;
 import io.jsonwebtoken.*;
@@ -29,8 +32,9 @@ public class JwtService {
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
 
     private final UserDetailsServiceImpl userDetailsService;
+    private final UserRepository userRepository;
 
-    private final RedisUtil redisUtil;
+//    private final RedisUtil redisUtil;
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 //    public static final String AUTHORIZATION_KEY = "auth";
@@ -88,8 +92,17 @@ public class JwtService {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+
+            String username = extractUsername(token);
+            User user = userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
+
+            if("logged out".equals(user.getRefreshToken())){
+                logger.error("로그아웃된 유저의 Refresh Token입니다.");
+                return false;
+            }
+            return true;
             //토큰이 blacklist 에 존재하는 토큰인지 확인.
-            return !redisUtil.hasKeyBlackList(token);
+//            return !redisUtil.hasKeyBlackList(token);
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
