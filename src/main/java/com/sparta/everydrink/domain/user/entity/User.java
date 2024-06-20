@@ -1,24 +1,17 @@
 package com.sparta.everydrink.domain.user.entity;
 
 import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@Getter
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
 @NoArgsConstructor
@@ -45,8 +38,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatusEnum status;
 
+    @Setter
+    @Column(name = "refresh_token")
     private String refreshToken;
-
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -59,11 +53,19 @@ public class User {
     private LocalDateTime modified_at;
 
 
-    public User(UserSignupRequestDto requestDto) {
-        this.username = requestDto.getUsername();
-        this.password = requestDto.getPassword();
-        this.nickname = requestDto.getNickname();
-        this.role = requestDto.getRole();
-        this.status = UserStatusEnum.ACTIVE;
+    public User(String username, String password, String nickname, UserRoleEnum role, UserStatusEnum status) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.role = role;
+        this.status = status;
+    }
+
+    public void logoutUser(){
+        this.refreshToken = "logged out";
+    }
+
+    public void deleteUser(){
+        this.status = UserStatusEnum.DELETED;
     }
 }
