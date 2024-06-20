@@ -1,4 +1,4 @@
-package com.sparta.everydrink.domain.token.service;
+package com.sparta.everydrink.domain.Auth.service;
 
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j(topic = "TokenService")
 @Component
-public class TokenService {
+public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 

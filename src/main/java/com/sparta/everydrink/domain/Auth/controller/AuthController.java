@@ -1,6 +1,6 @@
-package com.sparta.everydrink.domain.token.controller;
+package com.sparta.everydrink.domain.Auth.controller;
 
-import com.sparta.everydrink.domain.token.service.TokenService;
+import com.sparta.everydrink.domain.Auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @Slf4j(topic = "TokenController")
 @RequestMapping("/api")
-public class TokenController {
+public class AuthController {
 
-    private final TokenService tokenService;
+    private final AuthService authService;
     // Refresh token
     @PostMapping("/auth/refresh-token")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        tokenService.refreshToken(request, response);
+        authService.refreshToken(request, response);
     }
 }
