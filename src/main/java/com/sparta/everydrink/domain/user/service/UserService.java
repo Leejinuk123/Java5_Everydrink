@@ -1,13 +1,11 @@
 package com.sparta.everydrink.domain.user.service;
 
-import com.sparta.everydrink.config.PasswordConfig;
 import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.entity.UserRoleEnum;
 import com.sparta.everydrink.domain.user.entity.UserStatusEnum;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
 import com.sparta.everydrink.security.jwt.JwtService;
-import com.sparta.everydrink.util.RedisUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final RedisUtil redisUtil;
+//    private final RedisUtil redisUtil;
     private final PasswordEncoder passwordEncoder;
 
     public void signUp(UserSignupRequestDto requestDto) {
@@ -49,8 +47,8 @@ public class UserService {
 
         // 4. Access Token blacklist에 등록하여 만료시키기
         // 해당 엑세스 토큰의 남은 유효시간을 얻음
-        Long expiration = jwtService.getRemainingValidityMillis(accessToken);
-        redisUtil.setBlackList(accessToken, "access_token", expiration);
+//        Long expiration = jwtService.getRemainingValidityMillis(accessToken);
+//        redisUtil.setBlackList(accessToken, "access_token", expiration);
 
 //        User user = loadUserByUserId(jwtService.extractUsername(accessToken));
 //        user.logoutUser();
