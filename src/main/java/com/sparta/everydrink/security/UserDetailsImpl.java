@@ -72,7 +72,7 @@ public class UserDetailsImpl implements UserDetails {
     public static UserDetailsImpl of(User user) {
         return UserDetailsImpl.builder()
                 .usrname(user.getUsername())
-                .password(user.getPassword())
+                .password(user.getCurrentPassword())
                 .userRoleEnum(user.getRole())
                 .build();
     }

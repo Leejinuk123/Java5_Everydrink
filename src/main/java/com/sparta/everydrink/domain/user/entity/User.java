@@ -24,8 +24,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable =false)
-    private String password;
+    @Column(nullable = false)
+    private String currentPassword;
 
     @Column(nullable = false)
     private String nickname;
@@ -43,29 +43,53 @@ public class User {
     private String refreshToken;
 
     @CreatedDate
-    @Column(updatable = false, nullable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false)
+    @Column(name = "modified_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime modified_at;
+    private LocalDateTime modifiedAt;
 
+    private String password1;
 
-    public User(String username, String password, String nickname, UserRoleEnum role, UserStatusEnum status) {
+    private String password2;
+
+    private String password3;
+
+    public User(String username, String password, String nickname, UserRoleEnum role,
+            UserStatusEnum status) {
         this.username = username;
-        this.password = password;
+        this.currentPassword = password;
         this.nickname = nickname;
         this.role = role;
         this.status = status;
     }
 
-    public void logoutUser(){
+    public void logoutUser() {
         this.refreshToken = "logged out";
     }
 
-    public void deleteUser(){
+    public void deleteUser() {
         this.status = UserStatusEnum.DELETED;
+    }
+
+    public void updateProfile(String username, String nickname, UserRoleEnum role) {
+        this.username = username;
+        this.nickname = nickname;
+        this.role = role;
+    }
+
+    public void changePassword(String password) {
+        if (currentPassword.equals(password) || password1.equals(password) || password2.equals(
+                password) || password3.equals(password)) {
+            throw new IllegalArgumentException("이전 4개의 비밀번호 중 하나와 일치합니다. 다른 비밀번호를 입력하세요.");
+        }
+
+        this.currentPassword = password;
+        this.password1 = currentPassword;
+        this.password2 = password1;
+        this.password3 = password2;
     }
 }

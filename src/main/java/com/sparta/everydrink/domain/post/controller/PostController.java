@@ -1,9 +1,6 @@
 package com.sparta.everydrink.domain.post.controller;
 
 
-import com.sparta.everydrink.domain.comment.dto.CommentResponseDto;
-import com.sparta.everydrink.domain.comment.dto.PostWithCommentsResponseDto;
-import com.sparta.everydrink.domain.comment.service.CommentService;
 import com.sparta.everydrink.domain.common.CommonResponseDto;
 import com.sparta.everydrink.domain.post.dto.PostPageRequestDto;
 import com.sparta.everydrink.domain.post.dto.PostPageResponseDto;
@@ -11,18 +8,23 @@ import com.sparta.everydrink.domain.post.dto.PostRequestDto;
 import com.sparta.everydrink.domain.post.dto.PostResponseDto;
 import com.sparta.everydrink.domain.post.repository.PostRepository;
 import com.sparta.everydrink.domain.post.service.PostService;
-import com.sparta.everydrink.security.AuthenticationUser;
 import com.sparta.everydrink.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
