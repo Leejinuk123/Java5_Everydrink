@@ -1,5 +1,8 @@
 package com.sparta.everydrink.security.jwt;
 
+import com.sparta.everydrink.domain.user.entity.User;
+import com.sparta.everydrink.domain.user.repository.UserRepository;
+import com.sparta.everydrink.security.UserDetailsImpl;
 import com.sparta.everydrink.security.UserDetailsServiceImpl;
 import com.sparta.everydrink.util.RedisUtil;
 import io.jsonwebtoken.*;
@@ -29,11 +32,9 @@ public class JwtService {
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
 
     private final UserDetailsServiceImpl userDetailsService;
-
-    private final RedisUtil redisUtil;
+    private final UserRepository userRepository;
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
-//    public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
     private final long TOKEN_TIME = 30 * 60 * 1000L; // 30분
     private final long REFRESH_TOKEN_TIME = 14 * 24* 60 * 60 * 1000L; // 2주
@@ -85,11 +86,36 @@ public class JwtService {
     }
 
     // 토큰 검증
+//    public boolean validateToken(String token) {
+//        try {
+//            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+//            //토큰이 blacklist 에 존재하는 토큰인지 확인.
+//            //return !redisUtil.hasKeyBlackList(token);
+//        } catch (SecurityException | MalformedJwtException | SignatureException e) {
+//            logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+//        } catch (ExpiredJwtException e) {
+//            logger.error("Expired JWT token, 만료된 JWT token 입니다.");
+//        } catch (UnsupportedJwtException e) {
+//            logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+//        } catch (IllegalArgumentException e) {
+//            logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+//        }
+//        return false;
+//    }
+
+    // 토큰 검증
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            //토큰이 blacklist 에 존재하는 토큰인지 확인.
-            return !redisUtil.hasKeyBlackList(token);
+
+            String username = extractUsername(token);
+            User user = userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
+
+            if("logged out".equals(user.getRefreshToken())){
+                logger.error("로그아웃된 유저의 Refresh Token입니다.");
+                return false;
+            }
+            return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {

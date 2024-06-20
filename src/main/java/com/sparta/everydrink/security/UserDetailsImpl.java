@@ -2,6 +2,11 @@ package com.sparta.everydrink.security;
 
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.entity.UserRoleEnum;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,26 +14,28 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
+
+@Slf4j
+@Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
+    private final String usrname;
 
-    public UserDetailsImpl(User user) {
-        this.user = user;
-    }
+    private final String password;
 
-    public User getUser() {
-        return user;
-    }
+    @Getter
+    private UserRoleEnum userRoleEnum;
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return this.usrname;
     }
 
     @Override
@@ -60,5 +67,13 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public static UserDetailsImpl of(User user) {
+        return UserDetailsImpl.builder()
+                .usrname(user.getUsername())
+                .password(user.getPassword())
+                .userRoleEnum(user.getRole())
+                .build();
     }
 }
