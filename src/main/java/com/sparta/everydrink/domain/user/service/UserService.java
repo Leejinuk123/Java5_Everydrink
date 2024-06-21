@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -53,7 +54,7 @@ public class UserService {
     }
 
     @Transactional
-    public void modifyUserRoles(Long userId, UserRoleRequestDto requestDto, User user) {
+    public void adminSetUserRole(Long userId, UserRoleRequestDto requestDto, User user) {
         if(!Objects.equals(UserRoleEnum.ADMIN, user.getRole())) throw new IllegalArgumentException("관리자만 접근 가능한 요청입니다.");
         User getUser = loadUserByUserId(userId);
 
@@ -63,6 +64,10 @@ public class UserService {
         getUser.setRole(role);
 
         log.info("사용자 권한을 {}로 변경했습니다.", role);
+    }
+
+    public List<User> adminGetUserAll() {
+        return userRepository.findAll();
     }
 
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
