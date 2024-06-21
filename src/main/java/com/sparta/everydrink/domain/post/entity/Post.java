@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-// Todo 배포시 여기 @Setter 삭제
-@Setter
 @Entity
 @NoArgsConstructor
 public class Post extends TimeStampEntity {
@@ -48,8 +46,4 @@ public class Post extends TimeStampEntity {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
     }
-
-//    public void setTestDateTime() {
-//        super.setDateTimeInit();
-//    }
 }

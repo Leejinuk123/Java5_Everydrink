@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@Slf4j(topic = "TokenController")
+@Slf4j(topic = "AuthController")
 @RequestMapping("/api")
 public class AuthController {
 

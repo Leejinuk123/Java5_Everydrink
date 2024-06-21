@@ -33,10 +33,10 @@ public class PostController {
     // 게시물 등록
     @PostMapping
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addPost(
-            @AuthenticationPrincipal UserDetailsImpl user,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody PostRequestDto postRequestDto
     ) {
-        PostResponseDto postResponseDto = postService.addPost(postRequestDto, user);
+        PostResponseDto postResponseDto = postService.addPost(postRequestDto, userDetails.getUser());
         return ResponseEntity.ok()
                 .body(CommonResponseDto.<PostResponseDto>builder()
                         .statusCode(HttpStatus.OK.value())
@@ -94,11 +94,11 @@ public class PostController {
     //게시물 수정
     @PutMapping("/{postId}")
     public ResponseEntity<CommonResponseDto<PostResponseDto>> updatePost(
-            @AuthenticationPrincipal UserDetailsImpl user,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody PostRequestDto postRequestDto,
             @PathVariable("postId") Long postId
     ) {
-        PostResponseDto postResponseDto = postService.updatePost(postRequestDto, postId, user);
+        PostResponseDto postResponseDto = postService.updatePost(postRequestDto, postId, userDetails.getUser());
         return ResponseEntity.ok()
                 .body(CommonResponseDto.<PostResponseDto>builder()
                         .statusCode(HttpStatus.OK.value())
@@ -110,10 +110,10 @@ public class PostController {
     //게시물 삭제
     @DeleteMapping("/{postId}")
     public ResponseEntity<CommonResponseDto<PostResponseDto>> deletePost(
-            @AuthenticationPrincipal UserDetailsImpl user,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @PathVariable("postId") Long postId
     ) {
-        postService.deletePost(postId, user);
+        postService.deletePost(postId, userDetails.getUser());
         return ResponseEntity.ok()
                 .body(CommonResponseDto.<PostResponseDto>builder()
                         .statusCode(HttpStatus.OK.value())
