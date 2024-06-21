@@ -2,9 +2,7 @@ package com.sparta.everydrink.security.jwt;
 
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
-import com.sparta.everydrink.security.UserDetailsImpl;
 import com.sparta.everydrink.security.UserDetailsServiceImpl;
-import com.sparta.everydrink.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -94,7 +92,7 @@ public class JwtService {
             User user = userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
 
             if("logged out".equals(user.getRefreshToken())){
-                logger.error("로그아웃된 유저의 Refresh Token입니다.");
+                logger.error("로그아웃된 유저의 Refresh Token 입니다.");
                 return false;
             }
             return true;
