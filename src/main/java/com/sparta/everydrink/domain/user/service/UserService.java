@@ -1,11 +1,15 @@
 package com.sparta.everydrink.domain.user.service;
 
+import com.sparta.everydrink.domain.user.dto.ChangePasswordRequestDto;
+import com.sparta.everydrink.domain.user.dto.ProfileRequestDto;
+import com.sparta.everydrink.domain.user.dto.ProfileResponseDto;
 import com.sparta.everydrink.domain.admin.dto.UserRoleRequestDto;
 import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.entity.UserRoleEnum;
 import com.sparta.everydrink.domain.user.entity.UserStatusEnum;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
+import com.sparta.everydrink.security.UserDetailsImpl;
 import com.sparta.everydrink.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -53,6 +57,35 @@ public class UserService {
         log.info("로그아웃 성공");
     }
 
+    //프로필 조회
+    public ProfileResponseDto getProfile(User user) {
+        return new ProfileResponseDto(user.getUsername(), user.getNickname());
+    }
+
+    //프로필 수정
+    public void updateProfile(User user, ProfileRequestDto requestDto) {
+        user.updateProfile(requestDto.getUsername(), requestDto.getNickname());
+        userRepository.save(user);
+    }
+
+    //비밀번호 변경
+    public void changePassword(User user, ChangePasswordRequestDto requestDto) {
+        //현재 비밀번호가 올바른지 검증
+        if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("입력한 현재 비밀번호가 올바르지 않습니다.");
+        }
+        //새 비밀번호가 이전 비밀번호와 중복되는지 검증
+        if (passwordEncoder.matches(requestDto.getNewPassword(), user.getPassword()) ||
+                passwordEncoder.matches(requestDto.getNewPassword(), user.getPassword1()) ||
+                passwordEncoder.matches(requestDto.getNewPassword(), user.getPassword2()) ||
+                passwordEncoder.matches(requestDto.getNewPassword(), user.getPassword3())) {
+            throw new IllegalArgumentException("이전 3개의 비밀번호와 현재 비밀번호와 다른 비밀번호를 입력하세요.");
+        }
+        //비밀번호 변경
+        user.changePassword(passwordEncoder.encode(requestDto.getNewPassword()));
+        userRepository.save(user);
+    }
+  
     @Transactional
     public void adminSetUserRole(Long userId, UserRoleRequestDto requestDto, User user) {
         if(!Objects.equals(UserRoleEnum.ADMIN, user.getRole())) throw new IllegalArgumentException("관리자만 접근 가능한 요청입니다.");
@@ -69,7 +102,7 @@ public class UserService {
     public List<User> adminGetUserAll() {
         return userRepository.findAll();
     }
-
+  
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
     }
