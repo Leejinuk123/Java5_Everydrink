@@ -16,31 +16,32 @@ import java.util.Collection;
 
 
 @Slf4j
-@Builder
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
-    private final String usrname;
+    private final User user;
 
-    private final String password;
+    public UserDetailsImpl(User user) {
+        this.user = user;
+    }
 
-    @Getter
-    private UserRoleEnum userRoleEnum;
+    public User getUser() {
+        return user;
+    }
 
     @Override
     public String getPassword() {
-        return this.password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.usrname;
+        return user.getUsername();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String authority = UserRoleEnum.USER.getAuthority();
+        UserRoleEnum role = UserRoleEnum.USER;
+        String authority = role.getAuthority();
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
         Collection<GrantedAuthority> authorities = new ArrayList<>();
@@ -69,11 +70,4 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    public static UserDetailsImpl of(User user) {
-        return UserDetailsImpl.builder()
-                .usrname(user.getUsername())
-                .password(user.getCurrentPassword())
-                .userRoleEnum(user.getRole())
-                .build();
-    }
 }

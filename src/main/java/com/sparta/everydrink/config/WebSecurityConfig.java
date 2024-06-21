@@ -26,7 +26,8 @@ public class WebSecurityConfig {
     private final UserRepository userRepository;
 
     public WebSecurityConfig(JwtService jwtService, UserDetailsServiceImpl userDetailsService,
-                             AuthenticationConfiguration authenticationConfiguration, UserRepository userRepository) {
+            AuthenticationConfiguration authenticationConfiguration,
+            UserRepository userRepository) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
         this.authenticationConfiguration = authenticationConfiguration;
@@ -34,7 +35,8 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+            throws Exception {
         return configuration.getAuthenticationManager();
     }
 
@@ -67,7 +69,8 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                        .permitAll()
                         .requestMatchers("/api/user/signup").permitAll()
                         .requestMatchers("/api/user/login").permitAll()
                         .requestMatchers("/api/auth/refresh-token").permitAll()

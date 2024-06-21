@@ -12,9 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class PostRequestDto {
 
     // 게시물 제목
