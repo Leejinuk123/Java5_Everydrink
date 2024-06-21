@@ -11,7 +11,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "comments")
 @NoArgsConstructor
 public class Comment extends TimeStampEntity {

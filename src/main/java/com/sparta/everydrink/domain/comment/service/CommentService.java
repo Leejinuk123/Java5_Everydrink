@@ -19,21 +19,19 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CommentService {
+
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-
     @Transactional
-    public CommentResponseDto createComment(Long postId, CommentRequestDto requestDto, UserDetailsImpl user) {
+    public CommentResponseDto createComment(Long postId, CommentRequestDto requestDto, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new RuntimeException("입력하신 게시물이 존재하지 않습니다.")
         );
-        User byUsername = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        Comment comment = new Comment(requestDto, post, byUsername);
-        comment.setPost(post);
+        Comment comment = new Comment(requestDto, post, user);
+//        comment.setPost(post);
         Comment saveComment = commentRepository.save(comment);
         System.out.println(postId + "번 게시물에 댓글이 등록되었습니다.");
         return new CommentResponseDto(saveComment);
@@ -54,7 +52,7 @@ public class CommentService {
     public CommentResponseDto updateComment(Long id,
                                             Long postId,
                                             CommentRequestDto requestDto,
-                                            UserDetailsImpl user) {
+                                            User user) {
 
         postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("입력하신 게시물이 존재하지 않습니다.")
@@ -76,7 +74,7 @@ public class CommentService {
     @Transactional
     public String deleteComment(Long id,
                               Long postId,
-                              UserDetailsImpl user) {
+                              User user) {
         postRepository.findById(postId).orElseThrow(
                 () -> new RuntimeException("올바른 게시물을 선택해주세요.")
         );

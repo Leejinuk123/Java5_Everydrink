@@ -7,6 +7,7 @@ import com.sparta.everydrink.domain.user.entity.UserStatusEnum;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
 import com.sparta.everydrink.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +29,7 @@ public class UserService {
         log.info("회원가입 완료");
     }
 
+    @Transactional
     public void logout(HttpServletRequest request, User user) {
         String accessToken = request.getHeader("Authorization").substring(7);
         String refreshToken = request.getHeader("RefreshToken").substring(7);
@@ -37,7 +39,6 @@ public class UserService {
 
         User saveUser = loadUserByUserId(user.getUsername());
         saveUser.logoutUser();
-        userRepository.save(user);
 
         log.info("로그아웃 성공");
     }
