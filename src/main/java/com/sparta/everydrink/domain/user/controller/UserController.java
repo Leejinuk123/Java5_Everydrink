@@ -33,11 +33,4 @@ public class UserController {
         userService.logout(request, userDetails.getUser());
         return ResponseEntity.status(HttpStatus.OK).body(userDetails.getUser().getUsername() + " 아이디가 로그아웃 되었습니다.");
     }
-
-    @PutMapping("/user/{userId}/roles")
-    public  ResponseEntity<String> modifyUserRoles(@PathVariable Long userId, @Valid @RequestBody UserRoleRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        log.info(String.valueOf(requestDto.getRole()));
-        userService.modifyUserRoles(userId, requestDto, userDetails.getUser());
-        return ResponseEntity.status(HttpStatus.OK).body(userId + " 번 아이디가 [" + requestDto.getRole() + "] 권한으로 변경 되었습니다.");
-    }
 }
