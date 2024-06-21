@@ -23,8 +23,14 @@ public class UserService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
+    static final String ADMIN_KEY = "7Ja065Oc66+87YKk";
+
     public void signUp(UserSignupRequestDto requestDto) {
-        User user = new User(requestDto.getUsername(), passwordEncoder.encode(requestDto.getPassword()), requestDto.getNickname(), UserRoleEnum.USER, UserStatusEnum.ACTIVE);
+        UserRoleEnum role = UserRoleEnum.USER;
+        if (ADMIN_KEY.equals(requestDto.getAdminKey())){
+            role = UserRoleEnum.ADMIN;
+        }
+        User user = new User(requestDto.getUsername(), passwordEncoder.encode(requestDto.getPassword()), requestDto.getNickname(), role, UserStatusEnum.ACTIVE);
         userRepository.save(user);
         log.info("회원가입 완료");
     }
