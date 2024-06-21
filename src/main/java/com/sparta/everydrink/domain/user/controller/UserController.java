@@ -9,27 +9,29 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/signup")
+    @PostMapping("/user/signup")
     public ResponseEntity<String> signUp(
             @Valid @RequestBody UserSignupRequestDto requestDto) {
         userService.signUp(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body("회원가입 성공!");
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/user/logout")
     public void logout(HttpServletRequest request, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
         userService.logout(request, userDetails.getUser());
+    }
+
+    @PutMapping("/user/{userId}/roles")
+    public void modifyUserRoles(@PathVariable Long userId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        userService.modifyUserRoles(userId, userDetails.getUser());
     }
 }

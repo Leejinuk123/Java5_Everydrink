@@ -49,8 +49,11 @@ public class UserService {
         log.info("로그아웃 성공");
     }
 
+    public void modifyUserRoles(Long userId, User user) {
+
+    }
+
     public User loadUserByUserId(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
     }
-
 }
