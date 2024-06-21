@@ -134,4 +134,18 @@ public class PostService {
 
         return postList;
     }
+
+    //관리자 전용 게시글 수정 메서드
+    public PostResponseDto adminUpdatePost(PostRequestDto postRequestDto, Long postId) {
+        Post post = findPostById(postId);
+        post.update(postRequestDto);
+        postRepository.save(post);
+        return new PostResponseDto(post);
+    }
+
+    //관리자 전용 게시글 삭제 메서드
+    public void adminDeletePost(Long postId) {
+        Post post = findPostById(postId);
+        postRepository.delete(post);
+    }
 }
