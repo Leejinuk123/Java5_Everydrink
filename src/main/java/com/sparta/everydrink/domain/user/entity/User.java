@@ -29,6 +29,7 @@ public class User extends TimeStampEntity {
     @Column(nullable = false)
     private String nickname;
 
+    @Setter
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;

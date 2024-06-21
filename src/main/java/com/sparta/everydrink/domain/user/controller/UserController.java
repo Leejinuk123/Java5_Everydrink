@@ -1,16 +1,19 @@
 package com.sparta.everydrink.domain.user.controller;
 
+import com.sparta.everydrink.domain.user.dto.UserRoleRequestDto;
 import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
 import com.sparta.everydrink.domain.user.service.UserService;
 import com.sparta.everydrink.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j(topic = "UserController")
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -26,12 +29,15 @@ public class UserController {
     }
 
     @PostMapping("/user/logout")
-    public void logout(HttpServletRequest request, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
+    public ResponseEntity<String> logout(HttpServletRequest request, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
         userService.logout(request, userDetails.getUser());
+        return ResponseEntity.status(HttpStatus.OK).body(userDetails.getUser().getUsername() + " 아이디가 로그아웃 되었습니다.");
     }
 
     @PutMapping("/user/{userId}/roles")
-    public void modifyUserRoles(@PathVariable Long userId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        userService.modifyUserRoles(userId, userDetails.getUser());
+    public  ResponseEntity<String> modifyUserRoles(@PathVariable Long userId, @Valid @RequestBody UserRoleRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        log.info(String.valueOf(requestDto.getRole()));
+        userService.modifyUserRoles(userId, requestDto, userDetails.getUser());
+        return ResponseEntity.status(HttpStatus.OK).body(userId + " 번 아이디가 [" + requestDto.getRole() + "] 권한으로 변경 되었습니다.");
     }
 }

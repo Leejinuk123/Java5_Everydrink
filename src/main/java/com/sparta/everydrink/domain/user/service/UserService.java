@@ -1,5 +1,6 @@
 package com.sparta.everydrink.domain.user.service;
 
+import com.sparta.everydrink.domain.user.dto.UserRoleRequestDto;
 import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.entity.UserRoleEnum;
@@ -13,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -43,17 +46,29 @@ public class UserService {
         // 1. Access Token 검증
         jwtService.validateToken(accessToken);
 
-        User saveUser = loadUserByUserId(user.getUsername());
+        User saveUser = loadUserByUsername(user.getUsername());
         saveUser.logoutUser();
 
         log.info("로그아웃 성공");
     }
 
-    public void modifyUserRoles(Long userId, User user) {
+    @Transactional
+    public void modifyUserRoles(Long userId, UserRoleRequestDto requestDto, User user) {
+        if(!Objects.equals(UserRoleEnum.ADMIN, user.getRole())) throw new IllegalArgumentException("관리자만 접근 가능한 요청입니다.");
+        User getUser = loadUserByUserId(userId);
 
+        UserRoleEnum role = UserRoleEnum.USER;
+        if (Objects.equals(UserRoleEnum.ADMIN, requestDto.getRole())) role = UserRoleEnum.ADMIN;
+
+        getUser.setRole(role);
+
+        log.info("사용자 권한을 {}로 변경했습니다.", role);
     }
 
-    public User loadUserByUserId(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
+    }
+    public User loadUserByUserId(Long id) throws UsernameNotFoundException {
+        return userRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 }
