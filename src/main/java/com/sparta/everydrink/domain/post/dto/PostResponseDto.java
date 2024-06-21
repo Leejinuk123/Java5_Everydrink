@@ -13,7 +13,6 @@ public class PostResponseDto {
     private String title;
     private String content;
     private String username;
-    private List<String> s3Urls;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -27,17 +26,6 @@ public class PostResponseDto {
         this.username = post.getUser().getUsername();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getModifiedAt();
-        //this.likeCount = post.getLikeCount();
-    }
-
-    public PostResponseDto(Post post, List<String> s3Urls) {
-        this.id = post.getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.username = post.getUser().getUsername();
-        this.createdAt = post.getCreatedAt();
-        this.updatedAt = post.getModifiedAt();
-        this.s3Urls = s3Urls;
         this.likeCount = post.getLikeCount();
     }
 }
