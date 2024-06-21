@@ -5,13 +5,13 @@ import com.sparta.everydrink.domain.common.TimeStampEntity;
 import com.sparta.everydrink.domain.post.entity.Post;
 import com.sparta.everydrink.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
 @Table(name = "comments")
+@AllArgsConstructor
 @NoArgsConstructor
 public class Comment extends TimeStampEntity {
     @Id
@@ -29,10 +29,14 @@ public class Comment extends TimeStampEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Setter
+    private Long likeCount;
+
     public Comment(CommentRequestDto requestDto, Post post, User user) {
         this.content = requestDto.getContent();
         this.post = post;
         this.user = user;
+        this.likeCount = 0L;
     }
 
     public void update(CommentRequestDto requestDto) {

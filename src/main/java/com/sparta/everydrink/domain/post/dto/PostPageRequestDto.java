@@ -9,15 +9,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @ToString
-/*
-    - **페이지네이션**
-        - 10개씩 페이지네이션, 각 페이지 당 데이터가 10개씩 출력.
-    - **정렬 기능**
-        - 생성일자 기준 최신순
-        - 좋아요 많은 순
-    - **기간별 검색 기능**
-        - 예) 2024.05.01 ~ 2024.05.27 동안 작성된 게시물 검색
-     */
 public class PostPageRequestDto {
     // 선택 페이지
     @NotNull(message = "선택 페이지 필수 입력 값입니다.")
@@ -38,5 +29,15 @@ public class PostPageRequestDto {
     // 검색 기간 마지막일
     private String lastDate; // 생성일자 최신순 or 좋아요 많은 순
 
+
+    /*
+    - **페이지네이션**
+        - 5개씩 페이지네이션, 각 페이지 당 데이터가 5개씩 출력.
+    - **정렬 기능**
+        - 생성일자 기준 최신순
+        - 좋아요 많은 순
+    - **기간별 검색 기능**
+        - 예) 2024.05.01 ~ 2024.05.27 동안 작성된 게시물 검색
+     */
 
 }

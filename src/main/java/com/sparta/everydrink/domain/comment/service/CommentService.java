@@ -8,13 +8,13 @@ import com.sparta.everydrink.domain.post.entity.Post;
 import com.sparta.everydrink.domain.post.repository.PostRepository;
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
-import com.sparta.everydrink.security.UserDetailsImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +46,14 @@ public class CommentService {
                 .sorted(Comparator.comparing(Comment::getCreatedAt).reversed())
                 .map(CommentResponseDto::new)
                 .toList();
+    }
+
+    public List<CommentResponseDto> findAllCommentsByPostId(long postId) {
+        // 해당 postId와 연관된 댓글을 조회하는 로직 구현
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        return comments.stream()
+                .map(CommentResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional

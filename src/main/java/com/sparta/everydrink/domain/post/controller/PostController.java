@@ -1,6 +1,9 @@
 package com.sparta.everydrink.domain.post.controller;
 
 
+import com.sparta.everydrink.domain.comment.dto.CommentResponseDto;
+import com.sparta.everydrink.domain.comment.dto.PostWithCommentsResponseDto;
+import com.sparta.everydrink.domain.comment.service.CommentService;
 import com.sparta.everydrink.domain.common.CommonResponseDto;
 import com.sparta.everydrink.domain.post.dto.PostPageRequestDto;
 import com.sparta.everydrink.domain.post.dto.PostPageResponseDto;
@@ -27,7 +30,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-    //private final CommentService commentService;
+    private final CommentService commentService;
     private final PostRepository postRepository;
 
     // 게시물 등록
@@ -58,36 +61,23 @@ public class PostController {
                         .build());
     }
 
-    //    // 게시물 단일 조회 + 해당 게시물에 달린 댓글 전체 조회
-//    @GetMapping("/{postId}")
-//    public ResponseEntity<CommonResponseDto<PostWithCommentsResponseDto>> findById(@PathVariable(name = "postId") long id) {
-//        // 게시물 단일 조회
-//        PostResponseDto post = postService.findById(id);
-//
-//        // 해당 게시물에 달린 댓글 전체 조회
-//        List<CommentResponseDto> comments = commentService.findAllCommentsByPostId(id);
-//
-//        // Post와 Comments를 하나의 객체로 병합
-//        PostWithCommentsResponseDto postWithCommentsResponse = new PostWithCommentsResponseDto(post, comments);
-//
-//        return ResponseEntity.ok()
-//                .body(CommonResponseDto.<PostWithCommentsResponseDto>builder()
-//                        .statusCode(HttpStatus.OK.value())
-//                        .message("게시물 단일 조회, 댓글 조회 성공")
-//                        .data(postWithCommentsResponse)
-//                        .build());
-//    }
-
+        // 게시물 단일 조회 + 해당 게시물에 달린 댓글 전체 조회
     @GetMapping("/{postId}")
-    public ResponseEntity<CommonResponseDto<PostResponseDto>> findById(@PathVariable(name = "postId") long id) {
+    public ResponseEntity<CommonResponseDto<PostWithCommentsResponseDto>> findById(@PathVariable(name = "postId") long id) {
         // 게시물 단일 조회
         PostResponseDto post = postService.findById(id);
 
+        // 해당 게시물에 달린 댓글 전체 조회
+        List<CommentResponseDto> comments = commentService.findAllCommentsByPostId(id);
+
+        // Post와 Comments를 하나의 객체로 병합
+        PostWithCommentsResponseDto postWithCommentsResponse = new PostWithCommentsResponseDto(post, comments);
+
         return ResponseEntity.ok()
-                .body(CommonResponseDto.<PostResponseDto>builder()
+                .body(CommonResponseDto.<PostWithCommentsResponseDto>builder()
                         .statusCode(HttpStatus.OK.value())
                         .message("게시물 단일 조회, 댓글 조회 성공")
-                        .data(post)
+                        .data(postWithCommentsResponse)
                         .build());
     }
 
@@ -123,7 +113,9 @@ public class PostController {
 
     //페이지네이션
     @PostMapping("/page")
-    public ResponseEntity<CommonResponseDto<Page<PostPageResponseDto>>> getPostPage(@Valid @RequestBody PostPageRequestDto requestDto) {
+    public ResponseEntity<CommonResponseDto<Page<PostPageResponseDto>>> getPostPage(
+            @Valid @RequestBody PostPageRequestDto requestDto
+    ) {
         Page<PostPageResponseDto> page = postService.getPostPage(requestDto);
         return ResponseEntity.ok()
                 .body(CommonResponseDto.<Page<PostPageResponseDto>>builder()
