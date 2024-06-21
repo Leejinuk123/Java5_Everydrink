@@ -1,5 +1,6 @@
 package com.sparta.everydrink.domain.post.entity;
 
+import com.sparta.everydrink.domain.comment.entity.Comment;
 import com.sparta.everydrink.domain.common.TimeStampEntity;
 import com.sparta.everydrink.domain.post.dto.PostRequestDto;
 import com.sparta.everydrink.domain.user.entity.User;
@@ -7,6 +8,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -29,11 +33,8 @@ public class Post extends TimeStampEntity {
     @Setter
     private Long likeCount;
 
-//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Comment> comments = new ArrayList<>();
-
-//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<PostMedia> postMedias = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public Post(PostRequestDto postRequestDto, User user) {
         this.user = user;
