@@ -45,28 +45,28 @@ public class UserController {
 //    }
 
     //프로필 조회
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<ProfileResponseDto> getProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(userService.getProfile(userDetails.getUsername()));
+        return ResponseEntity.ok().body(userService.getProfile(userDetails.getUser()));
     }
 
     //프로필 수정
-    @PutMapping("/{userId}")
+    @PutMapping("/profile")
     public ResponseEntity<String> updateProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody ProfileRequestDto requestDto) {
-        userService.updateProfile(userDetails.getUsername(), requestDto);
+            @Valid @RequestBody ProfileRequestDto requestDto) {
+        userService.updateProfile(userDetails.getUser(), requestDto);
         return ResponseEntity.ok()
                 .body("프로필 수정 성공!");
     }
 
     //비밀번호 변경
-    @PutMapping("/{userId}")
+    @PutMapping("/password")
     public ResponseEntity<String> changePassword(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody ChangePasswordRequestDto requestDto) {
-        userService.changePassword(userDetails.getUsername(), requestDto);
+            @Valid @RequestBody ChangePasswordRequestDto requestDto) {
+        userService.changePassword(userDetails.getUser(), requestDto);
         return ResponseEntity.ok()
                 .body("비밀번호 변경 성공!");
     }

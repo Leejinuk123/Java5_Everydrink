@@ -1,6 +1,6 @@
 package com.sparta.everydrink.domain.user.entity;
 
-import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
+import com.sparta.everydrink.domain.common.TimeStampEntity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -15,7 +17,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
 @NoArgsConstructor
-public class User {
+public class User extends TimeStampEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +27,7 @@ public class User {
     private String username;
 
     @Column(nullable = false)
-    private String currentPassword;
+    private String password;
 
     @Column(nullable = false)
     private String nickname;
@@ -61,7 +63,7 @@ public class User {
     public User(String username, String password, String nickname, UserRoleEnum role,
             UserStatusEnum status) {
         this.username = username;
-        this.currentPassword = password;
+        this.password = password;
         this.nickname = nickname;
         this.role = role;
         this.status = status;
@@ -75,21 +77,15 @@ public class User {
         this.status = UserStatusEnum.DELETED;
     }
 
-    public void updateProfile(String username, String nickname, UserRoleEnum role) {
+    public void updateProfile(String username, String nickname) {
         this.username = username;
         this.nickname = nickname;
-        this.role = role;
     }
 
     public void changePassword(String password) {
-        if (currentPassword.equals(password) || password1.equals(password) || password2.equals(
-                password) || password3.equals(password)) {
-            throw new IllegalArgumentException("이전 4개의 비밀번호 중 하나와 일치합니다. 다른 비밀번호를 입력하세요.");
-        }
-
-        this.currentPassword = password;
-        this.password1 = currentPassword;
-        this.password2 = password1;
         this.password3 = password2;
+        this.password2 = password1;
+        this.password1 = this.password;
+        this.password = password;
     }
 }

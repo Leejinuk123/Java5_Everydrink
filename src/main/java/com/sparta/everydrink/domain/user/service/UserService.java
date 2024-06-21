@@ -14,8 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,22 +43,10 @@ public class UserService {
         // 1. Access Token 검증
         jwtService.validateToken(accessToken);
 
-        // 2. Access Token 에서 authentication 을 가져옵니다.
-//        Authentication authentication = jwtService.getAuthentication(accessToken);
+        User saveUser = loadUserByUserId(user.getUsername());
+        saveUser.logoutUser();
 
-        // 3. DB에 저장된 Refresh Token 제거
-//        User user = (User) authentication.getDetails();
-        user.logoutUser();
-        userRepository.save(user);
-
-        // 4. Access Token blacklist에 등록하여 만료시키기
-        // 해당 엑세스 토큰의 남은 유효시간을 얻음
-
-//        User user = loadUserByUserId(jwtService.extractUsername(accessToken));
-//        user.logoutUser();
-
-//        SecurityContextHolder.clearContext();
-        log.info("logout success");
+        log.info("로그아웃 성공");
     }
 
     public User loadUserByUserId(String username) throws UsernameNotFoundException {
@@ -68,30 +54,32 @@ public class UserService {
     }
 
     //프로필 조회
-    public ProfileResponseDto getProfile(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(IllegalArgumentException::new);
-        return new ProfileResponseDto(user.getUsername(), user.getNickname(), user.getRole());
+    public ProfileResponseDto getProfile(User user) {
+        return new ProfileResponseDto(user.getUsername(), user.getNickname());
     }
 
     //프로필 수정
-    @Transactional
-    public void updateProfile(String username, ProfileRequestDto requestDto) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(IllegalArgumentException::new);
-        user.updateProfile(requestDto.getUsername(), requestDto.getNickname(),
-                requestDto.getRole());
+    public void updateProfile(User user, ProfileRequestDto requestDto) {
+        user.updateProfile(requestDto.getUsername(), requestDto.getNickname());
+        userRepository.save(user);
     }
 
     //비밀번호 변경
-    @Transactional
-    public void changePassword(String username, ChangePasswordRequestDto requestDto) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(IllegalArgumentException::new);
-        if (!requestDto.getCurrentPassword().equals(user.getCurrentPassword())) {
+    public void changePassword(User user, ChangePasswordRequestDto requestDto) {
+        //현재 비밀번호가 올바른지 검증
+        if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
             throw new IllegalArgumentException("입력한 현재 비밀번호가 올바르지 않습니다.");
         }
-        user.changePassword(requestDto.getNewPassword());
+        //새 비밀번호가 이전 비밀번호와 중복되는지 검증
+        if (passwordEncoder.matches(requestDto.getNewPassword(), user.getPassword()) ||
+                passwordEncoder.matches(requestDto.getNewPassword(), user.getPassword1()) ||
+                passwordEncoder.matches(requestDto.getNewPassword(), user.getPassword2()) ||
+                passwordEncoder.matches(requestDto.getNewPassword(), user.getPassword3())) {
+            throw new IllegalArgumentException("이전 3개의 비밀번호와 현재 비밀번호와 다른 비밀번호를 입력하세요.");
+        }
+        //비밀번호 변경
+        user.changePassword(passwordEncoder.encode(requestDto.getNewPassword()));
+        userRepository.save(user);
     }
 
 
