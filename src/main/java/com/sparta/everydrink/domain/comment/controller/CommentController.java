@@ -28,8 +28,8 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<CommonResponseDto<CommentResponseDto>> createComment(@PathVariable(value = "postId") Long postId,
                                                                             @Valid @RequestBody CommentRequestDto requestDto,
-                                                                            @AuthenticationPrincipal UserDetailsImpl user) {
-        CommentResponseDto commentResponseDto =  commentService.createComment(postId, requestDto, user);
+                                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        CommentResponseDto commentResponseDto =  commentService.createComment(postId, requestDto, userDetails.getUser());
 
         return ResponseEntity.ok()
                 .body(CommonResponseDto.<CommentResponseDto>builder()
@@ -56,16 +56,16 @@ public class CommentController {
             @PathVariable Long id,
             @PathVariable(value = "postId") Long postId,
             @Valid @RequestBody CommentRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl user) {
-        return ResponseEntity.ok().body(commentService.updateComment(id,postId,requestDto,user));
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(commentService.updateComment(id, postId, requestDto, userDetails.getUser()));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteComment(
             @PathVariable Long id,
             @PathVariable(value = "postId") Long postId,
-            @Valid @AuthenticationPrincipal UserDetailsImpl user) {
-        commentService.deleteComment(id, postId, user);
+            @Valid @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        commentService.deleteComment(id, postId, userDetails.getUser());
         return ResponseEntity.ok().body("댓글 삭제 완료");
     }
 

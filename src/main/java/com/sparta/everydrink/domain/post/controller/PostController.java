@@ -1,9 +1,6 @@
 package com.sparta.everydrink.domain.post.controller;
 
 
-import com.sparta.everydrink.domain.comment.dto.CommentResponseDto;
-import com.sparta.everydrink.domain.comment.dto.PostWithCommentsResponseDto;
-import com.sparta.everydrink.domain.comment.service.CommentService;
 import com.sparta.everydrink.domain.common.CommonResponseDto;
 import com.sparta.everydrink.domain.post.dto.PostPageRequestDto;
 import com.sparta.everydrink.domain.post.dto.PostPageResponseDto;
@@ -11,7 +8,6 @@ import com.sparta.everydrink.domain.post.dto.PostRequestDto;
 import com.sparta.everydrink.domain.post.dto.PostResponseDto;
 import com.sparta.everydrink.domain.post.repository.PostRepository;
 import com.sparta.everydrink.domain.post.service.PostService;
-import com.sparta.everydrink.security.AuthenticationUser;
 import com.sparta.everydrink.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +26,6 @@ import java.util.List;
 @RequestMapping("/api/post")
 public class PostController {
 
-
     private final PostService postService;
     //private final CommentService commentService;
     private final PostRepository postRepository;
@@ -38,10 +33,10 @@ public class PostController {
     // 게시물 등록
     @PostMapping
     public ResponseEntity<CommonResponseDto<PostResponseDto>> addPost(
-            @AuthenticationPrincipal UserDetailsImpl user,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody PostRequestDto postRequestDto
     ) {
-        PostResponseDto postResponseDto = postService.addPost(postRequestDto, user);
+        PostResponseDto postResponseDto = postService.addPost(postRequestDto, userDetails.getUser());
         return ResponseEntity.ok()
                 .body(CommonResponseDto.<PostResponseDto>builder()
                         .statusCode(HttpStatus.OK.value())
@@ -99,11 +94,11 @@ public class PostController {
     //게시물 수정
     @PutMapping("/{postId}")
     public ResponseEntity<CommonResponseDto<PostResponseDto>> updatePost(
-            @AuthenticationPrincipal UserDetailsImpl user,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody PostRequestDto postRequestDto,
             @PathVariable("postId") Long postId
     ) {
-        PostResponseDto postResponseDto = postService.updatePost(postRequestDto, postId, user);
+        PostResponseDto postResponseDto = postService.updatePost(postRequestDto, postId, userDetails.getUser());
         return ResponseEntity.ok()
                 .body(CommonResponseDto.<PostResponseDto>builder()
                         .statusCode(HttpStatus.OK.value())
@@ -115,10 +110,10 @@ public class PostController {
     //게시물 삭제
     @DeleteMapping("/{postId}")
     public ResponseEntity<CommonResponseDto<PostResponseDto>> deletePost(
-            @AuthenticationPrincipal UserDetailsImpl user,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @PathVariable("postId") Long postId
     ) {
-        postService.deletePost(postId, user);
+        postService.deletePost(postId, userDetails.getUser());
         return ResponseEntity.ok()
                 .body(CommonResponseDto.<PostResponseDto>builder()
                         .statusCode(HttpStatus.OK.value())

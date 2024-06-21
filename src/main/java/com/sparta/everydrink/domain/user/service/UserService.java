@@ -10,8 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,22 +37,10 @@ public class UserService {
         // 1. Access Token 검증
         jwtService.validateToken(accessToken);
 
-        // 2. Access Token 에서 authentication 을 가져옵니다.
-//        Authentication authentication = jwtService.getAuthentication(accessToken);
+        User saveUser = loadUserByUserId(user.getUsername());
+        saveUser.logoutUser();
 
-        // 3. DB에 저장된 Refresh Token 제거
-//        User user = (User) authentication.getDetails();
-        user.logoutUser();
-        userRepository.save(user);
-
-        // 4. Access Token blacklist에 등록하여 만료시키기
-        // 해당 엑세스 토큰의 남은 유효시간을 얻음
-
-//        User user = loadUserByUserId(jwtService.extractUsername(accessToken));
-//        user.logoutUser();
-
-//        SecurityContextHolder.clearContext();
-        log.info("logout success");
+        log.info("로그아웃 성공");
     }
 
     public User loadUserByUserId(String username) throws UsernameNotFoundException {

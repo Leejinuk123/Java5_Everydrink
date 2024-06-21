@@ -8,22 +8,18 @@ import com.sparta.everydrink.domain.post.entity.Post;
 import com.sparta.everydrink.domain.post.repository.PostRepository;
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
-import com.sparta.everydrink.security.AuthenticationUser;
 import com.sparta.everydrink.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -35,12 +31,11 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    @Transactional
-    public PostResponseDto addPost(PostRequestDto postRequestDto, UserDetailsImpl user) {
-        User byUsername = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    public PostResponseDto addPost(PostRequestDto postRequestDto, User user) {
+//        User byUsername = userRepository.findByUsername(user.getUsername())
+//                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        Post post = new Post(postRequestDto, byUsername);
+        Post post = new Post(postRequestDto, user);
         postRepository.save(post);
 
         return new PostResponseDto(post);
@@ -60,8 +55,7 @@ public class PostService {
                 .toList();
     }
 
-    @Transactional
-    public PostResponseDto updatePost(PostRequestDto postRequestDto, Long postId, UserDetailsImpl user) {
+    public PostResponseDto updatePost(PostRequestDto postRequestDto, Long postId, User user) {
         Post post = findPostById(postId);
 
         validateUser(post, user);
@@ -72,8 +66,7 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
-    @Transactional
-    public void deletePost(Long postId, UserDetailsImpl user) {
+    public void deletePost(Long postId, User user) {
         Post post = findPostById(postId);
 
         validateUser(post, user);
@@ -86,7 +79,7 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
     }
 
-    private void validateUser(Post post, UserDetailsImpl user) {
+    private void validateUser(Post post, User user) {
         if (!post.getUser().getUsername().equals(user.getUsername())) {
             throw new IllegalArgumentException("작성자만 할 수 있습니다.");
         }
