@@ -4,6 +4,9 @@ import com.sparta.everydrink.domain.follow.dto.FollowRequestDto;
 import com.sparta.everydrink.domain.follow.dto.FollowResponseDto;
 import com.sparta.everydrink.domain.follow.entity.Follow;
 import com.sparta.everydrink.domain.follow.repository.FollowRepository;
+import com.sparta.everydrink.domain.post.dto.PostResponseDto;
+import com.sparta.everydrink.domain.post.entity.Post;
+import com.sparta.everydrink.domain.post.repository.PostRepository;
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
 import com.sparta.everydrink.security.UserDetailsImpl;
@@ -11,11 +14,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public FollowResponseDto followUser(FollowRequestDto followRequestDto, UserDetailsImpl user) {
@@ -55,5 +62,23 @@ public class FollowService {
         followRepository.delete(follow);
 
         return new FollowResponseDto(follow);
+    }
+
+    @Transactional
+    public List<PostResponseDto> getFollowedUserPosts(UserDetailsImpl user) {
+        User currentUser = userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        List<User> followedUsers = followRepository.findByFromUser(currentUser)
+                .stream()
+                .map(Follow::getToUser)
+                .collect(Collectors.toList());
+
+        List<Post> posts = postRepository.findByUserInOrderByCreatedAtDesc(followedUsers);
+
+        return posts.stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
+
     }
 }

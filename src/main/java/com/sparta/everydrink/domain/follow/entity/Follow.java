@@ -16,11 +16,11 @@ public class Follow extends TimeStampEntity {
 
     @ManyToOne
     @JoinColumn(name = "from_user")
-    private User fromUser;
+    private User fromUser;  // 팔로우한 사용자
 
     @ManyToOne
     @JoinColumn(name = "to_user")
-    private User toUser;
+    private User toUser; // 팔로잉된 사용자
 
     public Follow(User fromUser, User toUser){
         this.fromUser = fromUser;

@@ -69,9 +69,6 @@ public class User extends TimeStampEntity {
     @OneToMany(mappedBy = "toUser", fetch = FetchType.LAZY)
     private List<Follow> followers;
 
-
-    public User(String username, String password, String nickname, UserRoleEnum role,
-            UserStatusEnum status) {
     public User(String username, String password, String nickname, UserRoleEnum role, UserStatusEnum status) {
         this.username = username;
         this.password = password;
