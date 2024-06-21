@@ -2,9 +2,7 @@ package com.sparta.everydrink.security.jwt;
 
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
-import com.sparta.everydrink.security.UserDetailsImpl;
 import com.sparta.everydrink.security.UserDetailsServiceImpl;
-import com.sparta.everydrink.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -37,7 +35,7 @@ public class JwtService {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
     private final long TOKEN_TIME = 30 * 60 * 1000L; // 30분
-    private final long REFRESH_TOKEN_TIME = 14 * 24* 60 * 60 * 1000L; // 2주
+    private final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -91,9 +89,10 @@ public class JwtService {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 
             String username = extractUsername(token);
-            User user = userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(IllegalArgumentException::new);
 
-            if("logged out".equals(user.getRefreshToken())){
+            if ("logged out".equals(user.getRefreshToken())) {
                 logger.error("로그아웃된 유저의 Refresh Token입니다.");
                 return false;
             }
@@ -119,7 +118,8 @@ public class JwtService {
     public Authentication getAuthentication(String token) {
         String username = extractUsername(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, "",
+                userDetails.getAuthorities());
     }
 
     // HttpServletRequest 에서 access token 가져오기
@@ -129,7 +129,7 @@ public class JwtService {
         return accessToken;
     }
 
-    public String extractUsername(String token){
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -151,6 +151,7 @@ public class JwtService {
         Date now = new Date();
         return expiration.getTime() - now.getTime();
     }
+
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
