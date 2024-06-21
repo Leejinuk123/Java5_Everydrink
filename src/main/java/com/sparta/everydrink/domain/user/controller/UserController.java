@@ -10,24 +10,21 @@ import com.sparta.everydrink.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j(topic = "UserController")
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    //회원가입
-    @PostMapping("/signup")
+    @PostMapping("/user/signup")
     public ResponseEntity<String> signUp(
             @Valid @RequestBody UserSignupRequestDto requestDto) {
         userService.signUp(requestDto);
@@ -36,23 +33,15 @@ public class UserController {
                 .body("회원가입 성공!");
     }
 
-    //로그아웃
-//    @PostMapping("/logout")
-//    public void logout(
-//            HttpServletRequest request, @AuthenticationPrincipal UserDetailsImpl userDetails)
-//            throws Exception {
-//        userService.logout(request, userDetails.getUser());
-//    }
-
     //프로필 조회
-    @GetMapping()
+    @GetMapping("/user")
     public ResponseEntity<ProfileResponseDto> getProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok().body(userService.getProfile(userDetails.getUser()));
     }
 
     //프로필 수정
-    @PutMapping("/profile")
+    @PutMapping("/user/profile")
     public ResponseEntity<String> updateProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody ProfileRequestDto requestDto) {
@@ -60,9 +49,15 @@ public class UserController {
         return ResponseEntity.ok()
                 .body("프로필 수정 성공!");
     }
+  
+    @PostMapping("/user/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
+        userService.logout(request, userDetails.getUser());
+        return ResponseEntity.status(HttpStatus.OK).body(userDetails.getUser().getUsername() + " 아이디가 로그아웃 되었습니다.");
+    }
 
     //비밀번호 변경
-    @PutMapping("/password")
+    @PutMapping("/user/password")
     public ResponseEntity<String> changePassword(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody ChangePasswordRequestDto requestDto) {

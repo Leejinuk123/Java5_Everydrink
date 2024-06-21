@@ -2,9 +2,7 @@ package com.sparta.everydrink.security.jwt;
 
 import com.sparta.everydrink.domain.user.entity.User;
 import com.sparta.everydrink.domain.user.repository.UserRepository;
-import com.sparta.everydrink.security.UserDetailsImpl;
 import com.sparta.everydrink.security.UserDetailsServiceImpl;
-import com.sparta.everydrink.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;

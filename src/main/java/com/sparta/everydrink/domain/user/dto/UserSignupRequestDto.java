@@ -1,9 +1,6 @@
 package com.sparta.everydrink.domain.user.dto;
 
-
-import com.sparta.everydrink.domain.user.entity.UserRoleEnum;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
@@ -23,7 +20,9 @@ public class UserSignupRequestDto {
     @NotBlank
     private String nickname;
 
-    @NotNull
-    private UserRoleEnum role;
+    private String adminKey;
+
+//    @NotNull
+//    private UserRoleEnum role;
 
 }
