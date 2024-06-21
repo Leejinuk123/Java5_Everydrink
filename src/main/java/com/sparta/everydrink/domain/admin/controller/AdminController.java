@@ -23,14 +23,14 @@ public class AdminController {
 
     private final UserService userService;
 
-    @PutMapping("/admin/user/{userId}/roles")
-    public ResponseEntity<String> modifyUserRoles(@PathVariable Long userId, @Valid @RequestBody UserRoleRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    @PutMapping("/admin/user/{userId}/role")
+    public ResponseEntity<String> adminSetUserRole(@PathVariable Long userId, @Valid @RequestBody UserRoleRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         userService.adminSetUserRole(userId, requestDto, userDetails.getUser());
         return ResponseEntity.status(HttpStatus.OK).body(userId + " 번 아이디가 [" + requestDto.getRole() + "] 권한으로 변경 되었습니다.");
     }
 
     @GetMapping("/admin/user")
-    public ResponseEntity<CommonResponseDto<Object>> getUserAll(){
+    public ResponseEntity<CommonResponseDto<Object>> adminGetUserAll(){
         List<User> userList = userService.adminGetUserAll();
 
         return ResponseEntity.ok()
