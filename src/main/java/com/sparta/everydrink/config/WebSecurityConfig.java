@@ -74,7 +74,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/auth/refresh-token").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/post/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/post/{postId}/comment").permitAll()
-                        .requestMatchers("/api/user/{userId}/roles").hasRole("ADMIN") // 관리자 권한
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // 관리자 권한
                         // 서버 단에서 에러가 발생시 아래 url이 에러창을 띄워준다
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
