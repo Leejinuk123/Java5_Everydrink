@@ -1,6 +1,5 @@
 package com.sparta.everydrink.domain.user.controller;
 
-import com.sparta.everydrink.domain.user.dto.UserRoleRequestDto;
 import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
 import com.sparta.everydrink.domain.user.service.UserService;
 import com.sparta.everydrink.security.UserDetailsImpl;

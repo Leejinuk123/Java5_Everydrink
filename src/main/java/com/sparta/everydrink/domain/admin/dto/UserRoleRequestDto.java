@@ -1,4 +1,4 @@
-package com.sparta.everydrink.domain.user.dto;
+package com.sparta.everydrink.domain.admin.dto;
 
 import com.sparta.everydrink.domain.user.entity.UserRoleEnum;
 import jakarta.validation.constraints.NotNull;
