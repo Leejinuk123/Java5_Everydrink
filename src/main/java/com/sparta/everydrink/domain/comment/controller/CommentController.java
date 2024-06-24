@@ -40,7 +40,7 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponseDto<List<CommentResponseDto>>> findAll(@PathVariable Long postId) {
+    public ResponseEntity<CommonResponseDto<List<CommentResponseDto>>> findAll(@PathVariable(value = "postId") Long postId) {
         List<CommentResponseDto> comments = commentService.findAllComments(postId);
 
         return ResponseEntity.ok()
