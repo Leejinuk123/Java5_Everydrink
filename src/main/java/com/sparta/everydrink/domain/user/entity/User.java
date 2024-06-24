@@ -1,6 +1,7 @@
 package com.sparta.everydrink.domain.user.entity;
 
 import com.sparta.everydrink.domain.common.TimeStampEntity;
+import com.sparta.everydrink.domain.follow.entity.Follow;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -9,8 +10,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.LocalDateTime;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.util.List;
 
 @Entity
 @Getter
@@ -61,8 +62,14 @@ public class User extends TimeStampEntity {
 
     private String password3;
 
-    public User(String username, String password, String nickname, UserRoleEnum role,
-            UserStatusEnum status) {
+
+    @OneToMany(mappedBy = "fromUser", fetch = FetchType.LAZY)
+    private List<Follow> followings;
+
+    @OneToMany(mappedBy = "toUser", fetch = FetchType.LAZY)
+    private List<Follow> followers;
+
+    public User(String username, String password, String nickname, UserRoleEnum role, UserStatusEnum status) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;

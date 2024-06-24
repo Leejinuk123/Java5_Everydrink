@@ -2,11 +2,14 @@ package com.sparta.everydrink.domain.post.repository;
 
 import com.sparta.everydrink.domain.post.dto.PostPageResponseDto;
 import com.sparta.everydrink.domain.post.entity.Post;
+import com.sparta.everydrink.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
@@ -29,4 +32,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<PostPageResponseDto> findPostPages(@Param("startDate") String startDate,
                                             @Param("endDate") String endDate,
                                             Pageable pageable);
+
+
+    List<Post> findByUserInOrderByCreatedAtDesc(List<User> followedUsers);
 }
