@@ -77,6 +77,7 @@ public class User extends TimeStampEntity {
         this.status = status;
     }
 
+
     public void logoutUser() {
         this.refreshToken = "logged out";
     }

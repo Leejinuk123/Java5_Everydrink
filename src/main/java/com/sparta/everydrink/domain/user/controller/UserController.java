@@ -1,10 +1,13 @@
 package com.sparta.everydrink.domain.user.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.everydrink.domain.user.dto.ChangePasswordRequestDto;
+import com.sparta.everydrink.domain.user.dto.LoginRequestDto;
 import com.sparta.everydrink.domain.user.dto.ProfileRequestDto;
 import com.sparta.everydrink.domain.user.dto.ProfileResponseDto;
 import com.sparta.everydrink.domain.user.dto.UserSignupRequestDto;
+import com.sparta.everydrink.domain.user.service.NaverService;
 import com.sparta.everydrink.domain.user.service.UserService;
 import com.sparta.everydrink.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +26,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final NaverService naverService;
+
 
     @PostMapping("/user/signup")
     public ResponseEntity<String> signUp(
@@ -49,11 +54,13 @@ public class UserController {
         return ResponseEntity.ok()
                 .body("프로필 수정 성공!");
     }
-  
+
     @PostMapping("/user/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
+    public ResponseEntity<String> logout(HttpServletRequest request,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
         userService.logout(request, userDetails.getUser());
-        return ResponseEntity.status(HttpStatus.OK).body(userDetails.getUser().getUsername() + " 아이디가 로그아웃 되었습니다.");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userDetails.getUser().getUsername() + " 아이디가 로그아웃 되었습니다.");
     }
 
     //비밀번호 변경
@@ -66,5 +73,17 @@ public class UserController {
                 .body("비밀번호 변경 성공!");
     }
 
+
+    //네이버 로그인 콜백
+    @GetMapping("/user/naver/callback")
+    public ResponseEntity<String> login(@RequestParam String code, @RequestParam String state)
+            throws JsonProcessingException {
+        String[] token = naverService.naverLogin(code, state);
+
+        return ResponseEntity.ok()
+                .header("Authorization", token[0])
+                .header("RefreshToken", token[1])
+                .body("네이버 로그인 성공!");
+    }
 
 }
